@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Time! 🍁</title>
+<style>
+:root {
+  --orange:#FF6B35; --teal:#00B4D8; --green:#059669; --blue:#1D4ED8;
+  --purple:#7B2FBE; --yellow:#FFD166; --red:#EF476F; --success:#06D6A0;
+  --bg:#FFF8F2; --white:#FFFFFF;
+  --g100:#F5F5F5; --g200:#E9ECEF; --g400:#ADB5BD; --g600:#6C757D; --g800:#343A40;
+  --shadow:0 4px 20px rgba(0,0,0,.10); --r:20px; --rs:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--g800);min-height:100vh;font-size:16px;line-height:1.6}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:1000;background:var(--white);border-bottom:2px solid var(--g200);padding:10px 20px 14px}
+.topbar-inner{max-width:640px;margin:0 auto}
+.topbar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.logo{font-size:18px;font-weight:800;color:var(--orange)}
+.pct-label{font-size:13px;font-weight:700;color:var(--g600)}
+.progress-track{background:var(--g200);border-radius:10px;height:10px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--orange),#FF8C69);height:100%;border-radius:10px;transition:width .6s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* MAIN */
+.main{max-width:640px;margin:0 auto;padding:24px 16px 80px}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--r);padding:28px 24px;box-shadow:var(--shadow);margin-bottom:20px}
+
+/* WELCOME */
+.welcome-hero{text-align:center;padding:8px 0 4px}
+.big-emoji{font-size:64px;line-height:1;margin-bottom:12px}
+.welcome-title{font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--orange),#FF4B6E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.welcome-sub{font-size:15px;color:var(--g600);margin-bottom:24px;line-height:1.7}
+.learn-list{background:var(--g100);border-radius:var(--rs);padding:20px;margin:0 0 28px;text-align:left}
+.learn-list h3{font-size:12px;font-weight:700;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.learn-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--g200);font-size:15px}
+.learn-row:last-child{border-bottom:none}
+.learn-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.learn-row strong{display:block;font-size:15px;color:var(--g800)}
+.learn-row span{font-size:13px;color:var(--g600)}
+
+/* NAME INPUT */
+.name-group{margin:0 0 24px;text-align:left}
+.name-label{display:block;font-size:14px;font-weight:700;color:var(--g600);margin-bottom:8px}
+.name-input{width:100%;padding:14px 16px;border:2px solid var(--g200);border-radius:var(--rs);font-size:16px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;color:var(--g800)}
+.name-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,53,.15)}
+.name-input.error{border-color:var(--red);animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* WHATSAPP BUTTON */
+.big-btn.whatsapp{background:#25D366;color:white;box-shadow:0 4px 20px rgba(37,211,102,.3)}
+.big-btn.whatsapp:hover{background:#1da851;transform:translateY(-3px)}
+
+/* BADGES */
+.section-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:50px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.badge-present{background:#FFF3EE;color:#C84B11}
+.badge-past{background:#ECFDF5;color:#065F46}
+.badge-future{background:#EFF6FF;color:#1D4ED8}
+.badge-quiz{background:#F5F3FF;color:#5B21B6}
+
+/* LESSON */
+.lesson-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.lesson-desc{font-size:15px;color:var(--g600);margin-bottom:18px;line-height:1.7}
+.formula-box{background:linear-gradient(135deg,rgba(102,126,234,.08),rgba(118,75,162,.08));border-left:4px solid var(--teal);border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0}
+.formula-label{font-size:12px;font-weight:700;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.formula-line{font-size:14px;padding:3px 0;color:var(--g800)}
+.formula-line strong{font-family:monospace;font-size:15px;color:var(--teal)}
+.formula-warn{color:#C84B11;font-size:13px;margin-top:6px}
+.examples-label{font-size:12px;font-weight:700;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px}
+.example-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--g200);font-size:15px;align-items:flex-start}
+.example-item:last-child{border-bottom:none}
+.ex-emoji{font-size:18px;flex-shrink:0;line-height:1.5}
+
+/* EXERCISE META */
+.ex-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ex-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g400)}
+.ex-counter{font-size:13px;color:var(--g400)}
+.question-text{font-size:17px;font-weight:600;line-height:1.5;margin-bottom:20px;color:var(--g800)}
+.hint-text{font-size:13px;color:var(--g600);background:var(--g100);border-radius:8px;padding:8px 12px;margin-bottom:16px}
+
+/* MC */
+.mc-grid{display:flex;flex-direction:column;gap:10px}
+.mc-btn{width:100%;padding:14px 16px;border:2px solid var(--g200);border-radius:var(--rs);font-size:15px;cursor:pointer;background:var(--white);color:var(--g800);text-align:left;transition:all .18s;font-family:inherit;display:flex;align-items:center;gap:10px}
+.mc-btn:hover:not(:disabled){border-color:var(--orange);background:#FFF8F5;transform:translateX(3px)}
+.mc-btn:disabled{cursor:default}
+.mc-btn.correct{border-color:var(--success);background:#ECFDF5;color:#065F46;font-weight:600}
+.mc-btn.wrong{border-color:var(--red);background:#FFF1F3;color:#9B1C1C}
+.mc-btn.show-correct{border-color:var(--success);background:#ECFDF5;color:#065F46;opacity:.85}
+.mc-letter{width:28px;height:28px;border-radius:50%;background:var(--g200);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
+.mc-btn.correct .mc-letter{background:var(--success);color:white}
+.mc-btn.wrong .mc-letter{background:var(--red);color:white}
+.mc-btn.show-correct .mc-letter{background:var(--success);color:white}
+
+/* FILL */
+.fill-group{display:flex;gap:10px}
+.fill-input{flex:1;padding:14px 16px;border:2px solid var(--g200);border-radius:var(--rs);font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;color:var(--g800)}
+.fill-input:focus{border-color:var(--orange)}
+.fill-input.correct{border-color:var(--success);background:#ECFDF5}
+.fill-input.wrong{border-color:var(--red);background:#FFF1F3}
+.check-btn{padding:14px 20px;background:var(--orange);color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;transition:all .18s;font-family:inherit;white-space:nowrap}
+.check-btn:hover:not(:disabled){background:#E55A25}
+.check-btn:disabled{background:var(--g400);cursor:default}
+
+/* FEEDBACK */
+.feedback-box{display:none;border-radius:var(--rs);padding:14px 16px;margin-top:14px;font-size:14px;line-height:1.65}
+.feedback-box.show{display:block;animation:fadeIn .25s ease}
+.feedback-box.success{background:#ECFDF5;border:1.5px solid #A7F3D0;color:#065F46}
+.feedback-box.error{background:#FFF1F3;border:1.5px solid #FECDD3;color:#9B1C1C}
+
+/* NEXT BTN */
+.next-row{display:flex;justify-content:flex-end;margin-top:16px}
+.next-btn{padding:12px 24px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;transition:all .18s;font-family:inherit;display:none}
+.next-btn.show{display:block;animation:fadeIn .3s ease}
+.next-btn:hover{background:#0096C7;transform:translateY(-2px)}
+
+/* COMPLETE CARD */
+.complete-card{text-align:center;padding:40px 24px}
+.complete-emoji{font-size:72px;line-height:1;margin-bottom:16px}
+.complete-title{font-size:24px;font-weight:800;margin-bottom:8px}
+.complete-msg{font-size:15px;color:var(--g600);margin-bottom:24px;line-height:1.7}
+.score-summary{margin:20px auto 28px;display:inline-flex;flex-direction:column;align-items:center;background:var(--g100);border-radius:16px;padding:20px 36px}
+.score-circle{display:flex;align-items:baseline;gap:4px}
+.score-big{font-size:52px;font-weight:900;color:var(--orange);line-height:1}
+.score-slash{font-size:28px;color:var(--g400);font-weight:700}
+.score-total{font-size:28px;color:var(--g400);font-weight:700}
+.score-label{font-size:14px;color:var(--g600);margin-top:6px}
+
+/* BIG BUTTONS */
+.big-btn{display:inline-flex;align-items:center;gap:8px;padding:16px 32px;border:none;border-radius:50px;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.big-btn.orange{background:var(--orange);color:white;box-shadow:0 4px 20px rgba(255,107,53,.3)}
+.big-btn.orange:hover{background:#E55A25;transform:translateY(-3px);box-shadow:0 8px 25px rgba(255,107,53,.35)}
+.big-btn.teal{background:var(--teal);color:white;box-shadow:0 4px 20px rgba(0,180,216,.3)}
+.big-btn.teal:hover{background:#0096C7;transform:translateY(-3px)}
+.big-btn.green{background:var(--green);color:white;box-shadow:0 4px 20px rgba(5,150,105,.3)}
+.big-btn.green:hover{background:#047857;transform:translateY(-3px)}
+.big-btn.blue{background:var(--blue);color:white;box-shadow:0 4px 20px rgba(29,78,216,.3)}
+.big-btn.blue:hover{background:#1e40af;transform:translateY(-3px)}
+.big-btn.purple{background:var(--purple);color:white;box-shadow:0 4px 20px rgba(123,47,190,.3)}
+.big-btn.purple:hover{background:#6b21a8;transform:translateY(-3px)}
+
+/* QUIZ DOTS */
+.quiz-dots{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.quiz-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--g200);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--g400);transition:all .3s}
+.quiz-dot.done-c{background:var(--success);border-color:var(--success);color:white}
+.quiz-dot.done-w{background:var(--red);border-color:var(--red);color:white}
+.quiz-dot.current{border-color:var(--orange);color:var(--orange);background:#FFF8F5}
+.tense-label{font-size:12px;font-weight:700;padding:3px 10px;background:var(--g100);border-radius:20px;color:var(--g600)}
+
+/* RESULTS */
+.results-card{text-align:center;padding:36px 24px}
+.results-trophy{font-size:80px;line-height:1;margin-bottom:16px}
+.results-title{font-size:28px;font-weight:800;margin-bottom:8px}
+.results-subtitle{font-size:15px;color:var(--g600);margin-bottom:20px;line-height:1.7}
+.big-score{display:flex;align-items:baseline;justify-content:center;gap:6px;margin:16px 0 4px}
+.big-score-num{font-size:64px;font-weight:900;color:var(--orange);line-height:1}
+.big-score-denom{font-size:30px;color:var(--g400);font-weight:700}
+.pct-line{font-size:18px;font-weight:700;color:var(--g600);margin-bottom:24px}
+.section-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 16px}
+.sec-score-card{background:var(--g100);border-radius:var(--rs);padding:16px 10px;text-align:center}
+.sec-emoji{font-size:26px;margin-bottom:4px}
+.sec-num{font-size:20px;font-weight:800;color:var(--orange)}
+.sec-label{font-size:11px;color:var(--g600);font-weight:600;text-transform:uppercase;margin-top:2px}
+.quiz-score-row{background:linear-gradient(135deg,#F5F3FF,#EFF6FF);border-radius:var(--rs);padding:14px 20px;font-size:15px;font-weight:700;color:var(--purple);margin-bottom:24px}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* CONFETTI */
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}80%{opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.confetti{position:fixed;top:0;border-radius:3px;animation:confettiFall linear forwards;pointer-events:none;z-index:9999}
+
+@media(max-width:480px){
+  .card{padding:20px 16px}
+  .welcome-title{font-size:24px}
+  .question-text{font-size:16px}
+  .fill-group{flex-direction:column}
+  .check-btn{width:100%}
+  .big-btn{padding:14px 24px;font-size:16px}
+  .section-scores{gap:8px}
+  .big-score-num{font-size:52px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-header">
+      <span class="logo">🍁 English Time!</span>
+      <span id="pct-label" class="pct-label">0%</span>
+    </div>
+    <div class="progress-track">
+      <div id="progress-fill" class="progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- WELCOME -->
+  <div id="screen-welcome" class="screen active">
+    <div class="card">
+      <div class="welcome-hero">
+        <div class="big-emoji">🇧🇷 + 🍁</div>
+        <h1 class="welcome-title">Hello! Let's Learn English!</h1>
+        <p class="welcome-sub">This is for you — a fun way to practice verb tenses. No stress, no boring textbooks. Just English for your real life in Canada! 😊</p>
+        <div class="name-group">
+          <label class="name-label" for="student-name">First, what's your name? 😊</label>
+          <input type="text" id="student-name" class="name-input" placeholder="Type your name here..." maxlength="40" />
+        </div>
+        <div class="learn-list">
+          <h3>You will learn:</h3>
+          <div class="learn-row">
+            <div class="learn-icon" style="background:#FFF3EE">⏰</div>
+            <div><strong>Present Simple</strong><span>For habits and routines</span></div>
+          </div>
+          <div class="learn-row">
+            <div class="learn-icon" style="background:#ECFDF5">✅</div>
+            <div><strong>Past Simple</strong><span>For things that already happened</span></div>
+          </div>
+          <div class="learn-row">
+            <div class="learn-icon" style="background:#EFF6FF">🚀</div>
+            <div><strong>Future with WILL</strong><span>For plans and promises</span></div>
+          </div>
+          <div class="learn-row">
+            <div class="learn-icon" style="background:#F5F3FF">🏆</div>
+            <div><strong>Final Quiz</strong><span>Test everything you learned!</span></div>
+          </div>
+        </div>
+        <button class="big-btn orange" onclick="startSection('present')">Let's Start! 🎉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION SCREENS -->
+  <div id="screen-present" class="screen"><div id="present-content"></div></div>
+  <div id="screen-past" class="screen"><div id="past-content"></div></div>
+  <div id="screen-future" class="screen"><div id="future-content"></div></div>
+  <div id="screen-quiz" class="screen"><div id="quiz-content"></div></div>
+  <div id="screen-results" class="screen"><div id="results-content"></div></div>
+
+</main>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const SECTIONS = {
+  present: {
+    name:'present', badgeText:'⏰ Present Simple', badgeClass:'badge-present',
+    title:'Present Simple',
+    desc:'We use Present Simple for things we do every day — habits, routines, and facts that are always true!',
+    formula:[
+      'I / You / We / They → <strong>work</strong> (base verb)',
+      'He / She / It → <strong>works</strong> (base verb + S)'
+    ],
+    examples:[
+      {emoji:'☕', text:'I <strong>drink</strong> coffee every morning at Tim Hortons.'},
+      {emoji:'🚌', text:'She <strong>takes</strong> the bus to work every day.'},
+      {emoji:'🏠', text:'He <strong>lives</strong> in Brampton.'},
+      {emoji:'🛒', text:'We <strong>shop</strong> at No Frills on Fridays.'},
+      {emoji:'💼', text:'My boss <strong>starts</strong> work at 8am.'},
+    ],
+    exercises:[
+      {type:'mc', question:'Every morning, I _____ a coffee before work.',
+       options:['buys','buy','bought','will buy'], correct:1,
+       explanation:'💡 With <strong>I / You / We / They</strong>, use the base verb: <strong>buy</strong> ✓'},
+      {type:'mc', question:'My manager _____ at 8am every single day.',
+       options:['start','starting','starts','will start'], correct:2,
+       explanation:'💡 With <strong>He / She / It</strong>, add <strong>-S</strong>: start → <strong>starts</strong> ✓'},
+      {type:'mc', question:'Which sentence is correct? 🤔',
+       options:['She work at the mall.','She works at the mall.','She working at the mall.','She is work at the mall.'], correct:1,
+       explanation:'💡 With <strong>She</strong>, always add -S: work → <strong>works</strong> ✓'},
+      {type:'fill', question:'Complete: My neighbor _____ to work by subway every day.',
+       hint:'Verb: take | Subject: My neighbor (he/she) → add S!',
+       answers:['takes'],
+       explanation:'💡 "My neighbor" = She/He → take + S = <strong>takes</strong> ✓'},
+      {type:'fill', question:'Complete: We _____ lunch at noon every day at work.',
+       hint:'Verb: have | Subject: We → use the base verb!',
+       answers:['have'],
+       explanation:'💡 With <strong>We</strong>, use the base verb: <strong>have</strong> ✓'},
+    ],
+    completeMsg:'You learned Present Simple! Now you can talk about habits and daily routines. Amazing! 🌟',
+    nextName:'past', nextLabel:'Next: Past Simple →', nextColor:'green',
+  },
+
+  past: {
+    name:'past', badgeText:'✅ Past Simple', badgeClass:'badge-past',
+    title:'Past Simple',
+    desc:'We use Past Simple for things that happened in the past — and are finished. Done! ✓',
+    formula:[
+      'Regular verbs: <strong>work → worked</strong> &nbsp;|&nbsp; <strong>call → called</strong>',
+      'Irregular verbs: <strong>go → went</strong> &nbsp;|&nbsp; <strong>buy → bought</strong> &nbsp;|&nbsp; <strong>make → made</strong>',
+    ],
+    examples:[
+      {emoji:'🛒', text:'Yesterday, I <strong>bought</strong> milk at the grocery store.'},
+      {emoji:'💼', text:'Last week, she <strong>worked</strong> extra hours.'},
+      {emoji:'🍳', text:'This morning, I <strong>made</strong> rice and beans.'},
+      {emoji:'🚌', text:'He <strong>missed</strong> the bus this morning.'},
+      {emoji:'📞', text:'She <strong>called</strong> me last night.'},
+    ],
+    exercises:[
+      {type:'mc', question:'Yesterday, I _____ all my groceries at Walmart.',
+       options:['buy','buys','bought','will buy'], correct:2,
+       explanation:'💡 "buy" is irregular! Past form: buy → <strong>bought</strong> ✓'},
+      {type:'mc', question:'She _____ extra hours last Saturday.',
+       options:['work','works','worked','will work'], correct:2,
+       explanation:'💡 Regular verb: work + ED = <strong>worked</strong> ✓'},
+      {type:'mc', question:'What is the past form of GO? 🤔',
+       options:['goed','gone','going','went'], correct:3,
+       explanation:'💡 "go" is irregular! Past form: go → <strong>went</strong> ✓'},
+      {type:'fill', question:'Complete: I _____ my boss last Monday morning.',
+       hint:'Verb: call (regular) → add ED!',
+       answers:['called'],
+       explanation:'💡 Regular verb: call + ED = <strong>called</strong> ✓'},
+      {type:'fill', question:'Complete: She _____ a new winter jacket last week.',
+       hint:'Verb: buy (irregular) → past form is...?',
+       answers:['bought'],
+       explanation:'💡 Irregular verb: buy → <strong>bought</strong> ✓'},
+    ],
+    completeMsg:'You learned Past Simple! Now you can talk about things that happened yesterday, last week, or last year. Incrível! 🎉',
+    nextName:'future', nextLabel:'Next: Future with WILL →', nextColor:'blue',
+  },
+
+  future: {
+    name:'future', badgeText:'🚀 Future with WILL', badgeClass:'badge-future',
+    title:'Future with WILL',
+    desc:'We use WILL to talk about the future, make promises, and quick decisions!',
+    formula:[
+      'Subject + <strong>will</strong> + base verb',
+      '⚠️ Never add S or ED after WILL — always just the base verb!',
+    ],
+    examples:[
+      {emoji:'✈️', text:'Next summer, I <strong>will visit</strong> my family in Brazil.'},
+      {emoji:'🏥', text:'Tomorrow, I <strong>will go</strong> to the doctor.'},
+      {emoji:'📱', text:'I <strong>will call</strong> you tonight, I promise!'},
+      {emoji:'💼', text:'She <strong>will start</strong> her new job next Monday.'},
+      {emoji:'🛒', text:'We <strong>will go</strong> to the supermarket after work.'},
+    ],
+    exercises:[
+      {type:'mc', question:'Tomorrow, I _____ go to the bank before work.',
+       options:['am','was','will','do'], correct:2,
+       explanation:'💡 For the future, use: <strong>will</strong> + base verb ✓'},
+      {type:'mc', question:'She _____ visit her family in Brazil next Christmas.',
+       options:['wills','will','willing','willed'], correct:1,
+       explanation:'💡 WILL never changes — it\'s always <strong>will</strong> for everyone! ✓'},
+      {type:'mc', question:'Which sentence is correct? 🤔',
+       options:['I will goes to work tomorrow.','I will go to work tomorrow.','I wills go to work tomorrow.','I will going to work tomorrow.'], correct:1,
+       explanation:'💡 After WILL, always use the BASE VERB (no S, no ING): will + <strong>go</strong> ✓'},
+      {type:'fill', question:'Complete: Next month, I _____ start my English classes!',
+       hint:'Future = will + base verb. Base verb: start',
+       answers:['will start'],
+       explanation:'💡 Future: will + <strong>start</strong> = <strong>will start</strong> ✓'},
+      {type:'fill', question:'Complete: Don\'t worry! She _____ call you tomorrow.',
+       hint:'Future = will + base verb. Base verb: call',
+       answers:['will call'],
+       explanation:'💡 Future: will + <strong>call</strong> = <strong>will call</strong> ✓'},
+    ],
+    completeMsg:'You learned Future with WILL! Now you can make plans, promises, and talk about tomorrow. Fantástico! 🚀',
+    nextName:null, nextLabel:'Take the Final Quiz! 🏆', nextColor:'purple',
+  },
+};
+
+const QUIZ = [
+  {tense:'⏰ Present', question:'My sister _____ at a hospital downtown.',
+   options:['work','works','worked','will work'], correct:1,
+   explanation:'💡 "My sister" = She → work + <strong>S</strong> = works'},
+  {tense:'✅ Past', question:'Last night, I _____ pasta for dinner.',
+   options:['make','makes','made','will make'], correct:2,
+   explanation:'💡 Irregular verb: make → <strong>made</strong> in the past'},
+  {tense:'🚀 Future', question:'Next year, I _____ get my driver\'s license.',
+   options:['am','was','will','do'], correct:2,
+   explanation:'💡 For future, use: <strong>will</strong> + base verb'},
+  {tense:'⏰ Present', question:'Every Sunday, we _____ at the church nearby.',
+   options:['meeting','met','meet','will meet'], correct:2,
+   explanation:'💡 With <strong>We</strong>, use the base verb: <strong>meet</strong>'},
+  {tense:'✅ Past', question:'She _____ to work by bike yesterday.',
+   options:['go','goes','went','will go'], correct:2,
+   explanation:'💡 Irregular verb: go → <strong>went</strong> in the past'},
+  {tense:'🚀 Future', question:'I promise, I _____ help you move next weekend!',
+   options:['helped','help','helps','will help'], correct:3,
+   explanation:'💡 Promise = future! Use: <strong>will</strong> + help'},
+  {tense:'⏰ Present', question:'He always _____ the No.32 bus to get to work.',
+   options:['take','taking','takes','took'], correct:2,
+   explanation:'💡 "He" → take + <strong>S</strong> = takes'},
+  {tense:'✅ Past', question:'Last Christmas, I _____ my mom on video call.',
+   options:['see','sees','saw','will see'], correct:2,
+   explanation:'💡 Irregular verb: see → <strong>saw</strong> in the past'},
+  {tense:'🚀 Future', question:'We _____ buy a new TV next month.',
+   options:['are','will','was','do'], correct:1,
+   explanation:'💡 For future plans, use: <strong>will</strong> + buy'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+const state = {
+  scores: {
+    present:{correct:0,total:5},
+    past:{correct:0,total:5},
+    future:{correct:0,total:5},
+    quiz:{correct:0,total:9},
+  },
+  quizAnswers:[],
+  studentName:'',
+};
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startSection(name) {
+  const nameInput = document.getElementById('student-name');
+  if (nameInput) {
+    const n = nameInput.value.trim();
+    if (!n) {
+      nameInput.classList.add('error');
+      nameInput.focus();
+      setTimeout(() => nameInput.classList.remove('error'), 400);
+      return;
+    }
+    state.studentName = n;
+  }
+  showScreen(name);
+  const pctStart = {present:5,past:30,future:55}[name];
+  updateProgress(pctStart);
+  renderLesson(name);
+}
+
+// ── LESSON ────────────────────────────────────────────────────────────────────
+
+function renderLesson(name) {
+  const s = SECTIONS[name];
+  const formulaHTML = s.formula.map(f =>
+    f.startsWith('⚠️')
+      ? `<div class="formula-warn">${f}</div>`
+      : `<div class="formula-line">${f}</div>`
+  ).join('');
+  const examplesHTML = s.examples.map(e =>
+    `<div class="example-item"><span class="ex-emoji">${e.emoji}</span><span>${e.text}</span></div>`
+  ).join('');
+
+  document.getElementById(name + '-content').innerHTML = `
+    <div class="card">
+      <span class="section-badge ${s.badgeClass}">${s.badgeText}</span>
+      <h2 class="lesson-title">${s.title}</h2>
+      <p class="lesson-desc">${s.desc}</p>
+      <div class="formula-box">
+        <div class="formula-label">📌 Formula:</div>
+        ${formulaHTML}
+      </div>
+      <div class="examples-label">📚 Real life examples:</div>
+      ${examplesHTML}
+      <div style="text-align:center;margin-top:24px">
+        <button class="big-btn orange" onclick="renderExercise('${name}',0)">Got it! Let's Practice! 💪</button>
+      </div>
+    </div>`;
+}
+
+// ── EXERCISES ─────────────────────────────────────────────────────────────────
+
+function renderExercise(name, idx) {
+  const s = SECTIONS[name];
+  const ex = s.exercises[idx];
+  const total = s.exercises.length;
+  const isLast = idx === total - 1;
+  const letters = ['A','B','C','D'];
+
+  let inputHTML;
+  if (ex.type === 'mc') {
+    inputHTML = `<div class="mc-grid">` +
+      ex.options.map((opt,i) =>
+        `<button class="mc-btn" id="opt-${i}" onclick="handleMC('${name}',${idx},${i})">
+           <span class="mc-letter">${letters[i]}</span>${opt}
+         </button>`
+      ).join('') + `</div>`;
+  } else {
+    inputHTML = `
+      <p class="hint-text">💡 Hint: ${ex.hint}</p>
+      <div class="fill-group">
+        <input type="text" id="fill-input" class="fill-input" placeholder="Type your answer here..."
+               onkeydown="if(event.key==='Enter')handleFill('${name}',${idx})"/>
+        <button id="check-btn" class="check-btn" onclick="handleFill('${name}',${idx})">Check ✓</button>
+      </div>`;
+  }
+
+  document.getElementById(name + '-content').innerHTML = `
+    <div class="card">
+      <span class="section-badge ${s.badgeClass}">${s.badgeText}</span>
+      <div class="ex-meta">
+        <span class="ex-type">${ex.type === 'mc' ? 'Multiple Choice' : 'Fill in the Blank'}</span>
+        <span class="ex-counter">Question ${idx+1} of ${total}</span>
+      </div>
+      <p class="question-text">${ex.question}</p>
+      ${inputHTML}
+      <div id="feedback" class="feedback-box"></div>
+      <div class="next-row">
+        <button id="next-btn" class="next-btn" onclick="advanceSection('${name}',${idx})">
+          ${isLast ? 'See Results! 🎯' : 'Next →'}
+        </button>
+      </div>
+    </div>`;
+
+  if (ex.type === 'fill') {
+    setTimeout(() => { const inp = document.getElementById('fill-input'); if(inp) inp.focus(); }, 80);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── HANDLERS ─────────────────────────────────────────────────────────────────
+
+const CORRECT_MSGS = [
+  '🎉 Perfect! That\'s exactly right!',
+  '⭐ Yes! You got it!',
+  '🔥 Correct! You\'re on fire!',
+  '💪 Excellent! Keep going!',
+  '🌟 Amazing! You\'re so good at this!',
+  '🥳 Yes! That\'s correct!',
+];
+const WRONG_MSGS = [
+  '😊 Good try! Here is why:',
+  '💙 Almost! Here is the answer:',
+  '🌱 Not quite — but you\'re learning! Here\'s why:',
+  '💪 Keep going! Here is the correct answer:',
+  '🤗 That\'s OK! Here is what\'s correct:',
+];
+const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function showFeedback(isCorrect, explanation) {
+  const fb = document.getElementById('feedback');
+  const msg = isCorrect ? rnd(CORRECT_MSGS) : rnd(WRONG_MSGS);
+  fb.className = 'feedback-box show ' + (isCorrect ? 'success' : 'error');
+  fb.innerHTML = `<strong>${msg}</strong><br>${explanation}`;
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function handleMC(name, idx, optionIdx) {
+  const ex = SECTIONS[name].exercises[idx];
+  const isCorrect = optionIdx === ex.correct;
+  document.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
+  document.getElementById('opt-' + optionIdx).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('opt-' + ex.correct).classList.add('show-correct');
+  if (isCorrect) state.scores[name].correct++;
+  updateProgressInSection(name, idx + 1);
+  showFeedback(isCorrect, ex.explanation);
+}
+
+function handleFill(name, idx) {
+  const ex = SECTIONS[name].exercises[idx];
+  const input = document.getElementById('fill-input');
+  const checkBtn = document.getElementById('check-btn');
+  if (!input || input.disabled) return;
+  const val = normalise(input.value);
+  if (!val) { input.focus(); return; }
+  const isCorrect = ex.answers.some(a => normalise(a) === val);
+  input.disabled = true;
+  checkBtn.disabled = true;
+  input.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) input.value = ex.answers[0];
+  if (isCorrect) state.scores[name].correct++;
+  updateProgressInSection(name, idx + 1);
+  showFeedback(isCorrect, ex.explanation);
+}
+
+function normalise(s) {
+  return s.toLowerCase().trim().replace(/\s+/g,' ').replace(/[.,!?]+$/,'');
+}
+
+function advanceSection(name, idx) {
+  const s = SECTIONS[name];
+  if (idx + 1 < s.exercises.length) {
+    renderExercise(name, idx + 1);
+  } else {
+    showSectionComplete(name);
+  }
+}
+
+// ── SECTION COMPLETE ──────────────────────────────────────────────────────────
+
+function showSectionComplete(name) {
+  const s = SECTIONS[name];
+  const sc = state.scores[name];
+  const pct = Math.round((sc.correct / sc.total) * 100);
+  const trophy = pct === 100 ? '🏆' : pct >= 60 ? '🌟' : '💪';
+  const rating = pct === 100 ? '🏆 Perfect score!' : pct >= 60 ? '⭐ Great job!' : '💪 Keep practicing!';
+  const nextFn = s.nextName ? `startSection('${s.nextName}')` : 'startQuiz()';
+  const pctComplete = {present:28, past:53, future:78}[name];
+
+  document.getElementById(name + '-content').innerHTML = `
+    <div class="card complete-card">
+      <div class="complete-emoji">${trophy}</div>
+      <h2 class="complete-title">Section Complete!</h2>
+      <p class="complete-msg">${s.completeMsg}</p>
+      <div class="score-summary">
+        <div class="score-circle">
+          <span class="score-big">${sc.correct}</span>
+          <span class="score-slash">/</span>
+          <span class="score-total">${sc.total}</span>
+        </div>
+        <p class="score-label">${rating}</p>
+      </div>
+      <button class="big-btn ${s.nextColor}" onclick="${nextFn}">${s.nextLabel}</button>
+      <div style="margin-top:12px">
+        <button class="big-btn whatsapp" onclick="sendToTeacher('section','${name}')">📱 Send to Teacher</button>
+      </div>
+    </div>`;
+
+  updateProgress(pctComplete);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+
+function startQuiz() {
+  state.quizAnswers = [];
+  showScreen('quiz');
+  updateProgress(82);
+  renderQuizQ(0);
+}
+
+function renderQuizQ(idx) {
+  const q = QUIZ[idx];
+  const total = QUIZ.length;
+  const isLast = idx === total - 1;
+  const letters = ['A','B','C','D'];
+
+  const dots = QUIZ.map((_,i) => {
+    let cls = 'quiz-dot';
+    if (i < state.quizAnswers.length) cls += state.quizAnswers[i] ? ' done-c' : ' done-w';
+    else if (i === idx) cls += ' current';
+    return `<div class="${cls}">${i+1}</div>`;
+  }).join('');
+
+  const optsHTML = q.options.map((opt,i) =>
+    `<button class="mc-btn" id="qopt-${i}" onclick="handleQuizMC(${idx},${i})">
+       <span class="mc-letter">${letters[i]}</span>${opt}
+     </button>`
+  ).join('');
+
+  document.getElementById('quiz-content').innerHTML = `
+    <div class="card">
+      <span class="section-badge badge-quiz">🏆 Final Quiz</span>
+      <div class="quiz-dots">${dots}</div>
+      <div class="ex-meta">
+        <span class="tense-label">${q.tense}</span>
+        <span class="ex-counter">Question ${idx+1} of ${total}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      <div class="mc-grid">${optsHTML}</div>
+      <div id="feedback" class="feedback-box"></div>
+      <div class="next-row">
+        <button id="next-btn" class="next-btn" onclick="advanceQuiz(${idx})">
+          ${isLast ? 'See My Results! 🎉' : 'Next →'}
+        </button>
+      </div>
+    </div>`;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function handleQuizMC(idx, optionIdx) {
+  const q = QUIZ[idx];
+  const isCorrect = optionIdx === q.correct;
+  document.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
+  document.getElementById('qopt-' + optionIdx).classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) document.getElementById('qopt-' + q.correct).classList.add('show-correct');
+  state.quizAnswers.push(isCorrect);
+  if (isCorrect) state.scores.quiz.correct++;
+  const pct = 82 + Math.round(((idx+1) / QUIZ.length) * 18);
+  updateProgress(pct);
+  showFeedback(isCorrect, q.explanation);
+}
+
+function advanceQuiz(idx) {
+  if (idx + 1 >= QUIZ.length) showResults();
+  else renderQuizQ(idx + 1);
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+
+function showResults() {
+  const sc = state.scores;
+  const totalC = sc.present.correct + sc.past.correct + sc.future.correct + sc.quiz.correct;
+  const totalQ = 5 + 5 + 5 + 9;
+  const pct = Math.round((totalC / totalQ) * 100);
+
+  let trophy, title, msg;
+  if (pct >= 90) {
+    trophy='🏆'; title='Incredible! You\'re Amazing!';
+    msg='You got almost everything right! Your English is getting so strong. Brazil is proud of you! 🇧🇷❤️🍁';
+  } else if (pct >= 70) {
+    trophy='🌟'; title='Excellent Work!';
+    msg='Great job! You already know so much. Keep practicing and you\'ll be fluent before you know it! 💪';
+  } else if (pct >= 50) {
+    trophy='😊'; title='Good Progress!';
+    msg='You\'re doing well! Practice a little more and you\'ll master these tenses. You can do this! 🌱';
+  } else {
+    trophy='💪'; title='Keep Going!';
+    msg='Learning English takes time — and you\'re already doing it! Come back and try again. Every day you get better! 🌟';
+  }
+
+  document.getElementById('results-content').innerHTML = `
+    <div class="card results-card">
+      <div class="results-trophy">${trophy}</div>
+      <h1 class="results-title">${title}</h1>
+      <p class="results-subtitle">${msg}</p>
+      <div class="big-score">
+        <span class="big-score-num">${totalC}</span>
+        <span class="big-score-denom">/ ${totalQ}</span>
+      </div>
+      <p class="pct-line">${pct}% correct</p>
+      <div class="section-scores">
+        <div class="sec-score-card"><div class="sec-emoji">⏰</div><div class="sec-num">${sc.present.correct}/${sc.present.total}</div><div class="sec-label">Present</div></div>
+        <div class="sec-score-card"><div class="sec-emoji">✅</div><div class="sec-num">${sc.past.correct}/${sc.past.total}</div><div class="sec-label">Past</div></div>
+        <div class="sec-score-card"><div class="sec-emoji">🚀</div><div class="sec-num">${sc.future.correct}/${sc.future.total}</div><div class="sec-label">Future</div></div>
+      </div>
+      <div class="quiz-score-row">🏆 Final Quiz: ${sc.quiz.correct} / ${sc.quiz.total} correct</div>
+      <div class="results-btns">
+        <button class="big-btn orange" onclick="restartApp()">🔄 Try Again</button>
+        <button class="big-btn teal" onclick="startSection('present')">📚 Review</button>
+        <button class="big-btn whatsapp" onclick="sendToTeacher('results','')">📱 Send to Teacher</button>
+      </div>
+    </div>`;
+
+  showScreen('results');
+  updateProgress(100);
+  if (pct >= 60) launchConfetti();
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────────────────
+
+function updateProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+function updateProgressInSection(name, answered) {
+  const ranges = {present:[5,28], past:[30,53], future:[55,78]};
+  const [min, max] = ranges[name];
+  updateProgress(Math.min(min + Math.round((answered/5) * (max-min)), max));
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+
+function launchConfetti() {
+  const colors = ['#FF6B35','#FFD166','#06D6A0','#00B4D8','#EF476F','#7B2FBE'];
+  for (let i = 0; i < 70; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.cssText = `left:${Math.random()*100}vw;background:${colors[i%colors.length]};
+        width:${8+Math.random()*8}px;height:${8+Math.random()*8}px;
+        animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*.8}s`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }, i * 30);
+  }
+}
+
+// ── WHATSAPP ──────────────────────────────────────────────────────────────────
+
+function sendToTeacher(type, section) {
+  const name = state.studentName || 'Student';
+  const sectionNames = {present:'Present Simple', past:'Past Simple', future:'Future with WILL'};
+  let msg;
+  if (type === 'section') {
+    const sc = state.scores[section];
+    msg = `Hi Teacher Fabio! I'm ${name} and I just completed ${sectionNames[section]} with ${sc.correct}/${sc.total}. 🎉`;
+  } else {
+    const sc = state.scores;
+    const totalC = sc.present.correct + sc.past.correct + sc.future.correct + sc.quiz.correct;
+    const pct = Math.round((totalC / 24) * 100);
+    msg = `Hi Teacher Fabio! I'm ${name} and I just finished all the lessons! 🎉\n\nFinal score: ${totalC}/24 (${pct}%)\n\n⏰ Present Simple: ${sc.present.correct}/5\n✅ Past Simple: ${sc.past.correct}/5\n🚀 Future with WILL: ${sc.future.correct}/5\n🏆 Final Quiz: ${sc.quiz.correct}/9`;
+  }
+  window.open('https://wa.me/5511981056941?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ── RESTART ───────────────────────────────────────────────────────────────────
+
+function restartApp() {
+  state.scores = {
+    present:{correct:0,total:5}, past:{correct:0,total:5},
+    future:{correct:0,total:5}, quiz:{correct:0,total:9},
+  };
+  state.quizAnswers = [];
+  updateProgress(0);
+  showScreen('welcome');
+}
+</script>
+</body>
+</html>
